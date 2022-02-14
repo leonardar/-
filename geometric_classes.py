@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (QLabel, QLineEdit, QGridLayout, QGraphicsItem, QGraphicsRectItem, QGraphicsEllipseItem,
                                QGraphicsPolygonItem)
-from PySide6.QtGui import QDoubleValidator
+from PySide6.QtGui import QDoubleValidator, QIntValidator
 from PySide6.QtCore import QPointF
 import pyvista as pv
 from math import sqrt, pow, pi
@@ -51,11 +51,15 @@ class Shape2D(Shape):
         """Получение периметра фигуры"""
         pass
 
-    def calculate(self):
+    def calculate(self) -> object:
         """Расчёт характеристик фигуры"""
         result = super().calculate()
         result.update({"perimeter": self.get_perimeter()})
         return result
+
+    def validate(self):
+        "Проверка на соответствие свойствам фигуры"
+        pass
 
     def draw(self):
         """Отрисовка фигуры"""
@@ -80,6 +84,10 @@ class Shape3D(Shape):
         result = super().calculate()
         result.update({"volume": self.get_volume()})
         return result
+
+    def validate(self):
+        "Проверка на соответствие свойствам фигуры"
+        pass
 
     def draw(self):
         """Отрисовка фигуры"""
@@ -110,6 +118,9 @@ class Rectangle(Shape2D):
     def get_area(self):
         return self.a * self.b
 
+    def get_diagonal(self):
+        return sqrt(self.a **2 + self.b **2)
+
     def validate(self):
         if self.a == 0 or self.b == 0:
             raise ValueError("Параметры не могут быть 0")
@@ -122,6 +133,7 @@ class Rectangle(Shape2D):
         self.validate()
         self.draw()
         result = super().calculate()
+        result.update({'diagonal': self.get_diagonal()})
         return result
 
     def draw(self):
@@ -166,6 +178,9 @@ class Square(Shape2D):
     def get_area(self):
         return pow(self.a, 2)
 
+    def get_diagonal(self):
+        return self.a * sqrt(2)
+
     def validate(self):
         if self.a == 0:
             raise ValueError("Параметры не могут быть 0")
@@ -176,6 +191,7 @@ class Square(Shape2D):
         self.validate()
         self.draw()
         result = super().calculate()
+        result.update({'diagonal': self.get_diagonal()})
         return result
 
     def draw(self):
@@ -207,6 +223,9 @@ class Circle(Shape2D):
     def set_r(self, r):
         self.r = r
 
+    def get_diameter(self):
+        return self.r * 2
+
     def get_perimeter(self):
         return 2 * pi * self.r
 
@@ -223,6 +242,7 @@ class Circle(Shape2D):
         self.validate()
         self.draw()
         result = super().calculate()
+        result.update({'diameter': self.get_diameter()})
         return result
 
     def draw(self):
@@ -261,6 +281,9 @@ class Cube(Shape3D):
     def get_area(self):
         return 6 * pow(self.a, 2)
 
+    def get_diagonal(self):
+        return self.a * sqrt(3)
+
     def validate(self):
         if self.a == 0:
             raise ValueError("Параметры не могут быть 0")
@@ -271,6 +294,7 @@ class Cube(Shape3D):
         self.validate()
         self.draw()
         result = super().calculate()
+        result.update({'diagonal': self.get_diagonal()})
         return result
 
     def draw(self):
@@ -546,6 +570,9 @@ class Triangle(Shape2D):
         height = 2 * sqrt(p * (p - self.a) * (p - self.b) * (p - self.c)) / self.b
         return height * self.b / 2
 
+    def get_median(self):
+        return 1 / 2 * sqrt(2 * self.a ** 2 + 2 * self.b ** 2 - self.c ** 2)
+
     def validate(self):
         if self.a == 0 or self.b == 0 or self.c == 0:
             raise ValueError("Параметры не могут быть 0")
@@ -564,6 +591,7 @@ class Triangle(Shape2D):
         self.validate()
         self.draw()
         result = super().calculate()
+        result.update({'median': self.get_median()})
         return result
 
     def draw(self):
@@ -577,7 +605,6 @@ class Triangle(Shape2D):
         triangle_item.setFlag(QGraphicsItem.ItemIsMovable, True)
         self.scene.addItem(triangle_item)
 
-    @property
     def get_params_layout(self):
         grid_layout = QGridLayout()
 
@@ -601,5 +628,163 @@ class Triangle(Shape2D):
         self.c_edit.setValidator(VALIDATOR)
         grid_layout.addWidget(c_label, 2, 0)
         grid_layout.addWidget(self.c_edit, 2, 1)
+
+        return grid_layout
+
+
+class Parallelepiped(Shape3D):
+
+    title = "Параллелепипед"
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.a = 0
+        self.b = 0
+        self.c = 0
+
+    def set_a(self, a):
+        self.a = a
+
+    def set_b(self, b):
+        self.b = b
+
+    def set_c(self, c):
+        self.c = c
+
+    def get_volume(self):
+        return self.a * self.b * self.c
+
+    def get_area(self):
+        return 2 * (self.a * self.b + self.b * self.c + self.a * self.c)
+
+    def get_diagonal(self):
+        return sqrt(self.a **2 + self.b **2 + self.c **2)
+
+    def validate(self):
+        if self.a == 0:
+            raise ValueError("Параметры не могут быть 0")
+
+    def calculate(self):
+        if self.a_edit.text() != "":
+            self.set_a(float(self.a_edit.text()))
+        if self.b_edit.text() != "":
+            self.set_b(float(self.b_edit.text()))
+        if self.c_edit.text() != "":
+            self.set_c(float(self.c_edit.text()))
+        self.validate()
+        self.draw()
+        result = super().calculate()
+        result.update({'diagonal': self.get_diagonal()})
+        return result
+
+    def draw(self):
+        self.scene.clear()
+        parallelepiped = pv.Cube(x_length=self.a, y_length=self.b, z_length=self.c)
+        self.scene.addItem(parallelepiped, color="green", show_edges=True)
+
+    def get_params_layout(self):
+        grid_layout = QGridLayout()
+
+        a_label = QLabel("a =")
+        self.a_edit = QLineEdit()
+        self.a_edit.setPlaceholderText("0")
+        self.a_edit.setValidator(VALIDATOR)
+        grid_layout.addWidget(a_label, 0, 0)
+        grid_layout.addWidget(self.a_edit, 0, 1)
+
+        b_label = QLabel("b =")
+        self.b_edit = QLineEdit()
+        self.b_edit.setPlaceholderText("0")
+        self.b_edit.setValidator(VALIDATOR)
+        grid_layout.addWidget(b_label, 1, 0)
+        grid_layout.addWidget(self.b_edit, 1, 1)
+
+        c_label = QLabel("c =")
+        self.c_edit = QLineEdit()
+        self.c_edit.setPlaceholderText("0")
+        self.c_edit.setValidator(VALIDATOR)
+        grid_layout.addWidget(c_label, 2, 0)
+        grid_layout.addWidget(self.c_edit, 2, 1)
+
+        return grid_layout
+
+
+class Pyramid(Shape3D):
+    title = "Пирамида"
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.a = 0
+        self.n = 0
+        self.h = 0
+
+    def set_a(self, a):
+        self.a = a
+
+    def set_h(self, h):
+        self.h = h
+
+    def set_n(self, n):
+        self.n = n
+
+    def get_volume(self):
+        x = sqrt(pow(self.a, 2) - pow(self.a / 2, 2))
+        p = self.a * self.n
+        S = p * x / 2
+        return S * self.h / 3
+
+    def get_area(self):
+        x = sqrt(pow(self.a, 2) - pow(self.a / 2, 2))
+        p = self.a * self.n
+        S1 = p * x / 2
+        x2 = pow(self.a, 2) + pow(self.h, 2)
+        h = sqrt(x2 - pow(self.a / 2, 2))
+        S2 = self.a * h / 2
+        return S1 + self.n * S2
+
+    def validate(self):
+        if self.a == 0 or self.h == 0 or self.n == 0:
+            raise ValueError("Параметры не могут быть 0")
+
+    def calculate(self):
+        if self.a_edit.text() != "":
+            self.set_a(float(self.a_edit.text()))
+        if self.h_edit.text() != "":
+            self.set_h(float(self.h_edit.text()))
+        if self.n_edit.text() != "":
+            self.set_n(int(self.n_edit.text()))
+        self.validate()
+        self.draw()
+        result = super().calculate()
+        return result
+
+    def draw(self):
+        self.scene.clear()
+        cone = pv.Cone(radius=self.a, height=self.h, resolution=self.n)
+        self.scene.addItem(cone, color="green", show_edges=True)
+
+    def get_params_layout(self):
+        grid_layout = QGridLayout()
+
+        a_label = QLabel("a =")
+        self.a_edit = QLineEdit()
+        self.a_edit.setPlaceholderText("0")
+        self.a_edit.setValidator(VALIDATOR)
+        grid_layout.addWidget(a_label, 0, 0)
+        grid_layout.addWidget(self.a_edit, 0, 1)
+
+        h_label = QLabel("h =")
+        self.h_edit = QLineEdit()
+        self.h_edit.setPlaceholderText("0")
+        self.h_edit.setValidator(VALIDATOR)
+        grid_layout.addWidget(h_label, 1, 0)
+        grid_layout.addWidget(self.h_edit, 1, 1)
+
+        n_label = QLabel("n =")
+        self.n_edit = QLineEdit()
+        self.n_edit.setPlaceholderText("0")
+        self.n_edit.setValidator(QIntValidator(3, 10))
+        grid_layout.addWidget(n_label, 2, 0)
+        grid_layout.addWidget(self.n_edit, 2, 1)
 
         return grid_layout

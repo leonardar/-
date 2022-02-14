@@ -4,7 +4,9 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QComboBox, QLabel, QVB
 import sys
 
 from view_3D import View3D
-from geometric_classes import Rectangle, Square, Circle, Cube, Sphere, Triangle, Rhombus, Cylinder, Cone
+from geometric_classes import (Rectangle, Square, Circle, Cube, Sphere, Triangle, Rhombus, Cylinder, Cone,
+                               Parallelepiped, Pyramid)
+
 
 class Window(QMainWindow):
 
@@ -20,7 +22,7 @@ class Window(QMainWindow):
 
         self.figure_selector = QComboBox()
         self.figure_selector.addItems(["", "Triangle", "Rectangle", "Square", "Circle", "Cube", "Sphere", "Rhombus",
-                                       "Cylinder", "Cone"])
+                                       "Cylinder", "Cone", "Parallelepiped", "Pyramid"])
         self.figure_selector.setMinimumWidth(200)
         self.figure_selector.currentIndexChanged.connect(self.figure_selected)
         v_layout.addWidget(self.figure_selector)
@@ -78,6 +80,10 @@ class Window(QMainWindow):
             self.stacked_widget.setCurrentIndex(1)
             self.figure = Cube(self.view3D)
             v_layout.addLayout(self.figure.get_params_layout())
+        elif figure_name == "Parallelepiped":
+            self.stacked_widget.setCurrentIndex(1)
+            self.figure = Parallelepiped(self.view3D)
+            v_layout.addLayout(self.figure.get_params_layout())
         elif figure_name == "Sphere":
             self.stacked_widget.setCurrentIndex(1)
             self.figure = Sphere(self.view3D)
@@ -85,6 +91,10 @@ class Window(QMainWindow):
         elif figure_name == "Cylinder":
             self.stacked_widget.setCurrentIndex(1)
             self.figure = Cylinder(self.view3D)
+            v_layout.addLayout(self.figure.get_params_layout())
+        elif figure_name == "Pyramid":
+            self.stacked_widget.setCurrentIndex(1)
+            self.figure = Pyramid(self.view3D)
             v_layout.addLayout(self.figure.get_params_layout())
         elif figure_name == "Cone":
             self.stacked_widget.setCurrentIndex(1)
