@@ -59,7 +59,7 @@ class Window(QMainWindow):
         if figure_name == "Triangle":
             self.stacked_widget.setCurrentIndex(0)
             self.figure = Triangle(self.scene2D)
-            v_layout.addLayout(self.figure.get_params_layout)
+            v_layout.addLayout(self.figure.get_params_layout())
         elif figure_name == "Rhombus":
             self.stacked_widget.setCurrentIndex(0)
             self.figure = Rhombus(self.scene2D)
