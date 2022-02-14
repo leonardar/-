@@ -99,6 +99,7 @@ class Shape3D(Shape):
 
 
 class Rectangle(Shape2D):
+
     title = "Прямоугольник"
 
     def __init__(self, scene):
@@ -119,7 +120,7 @@ class Rectangle(Shape2D):
         return self.a * self.b
 
     def get_diagonal(self):
-        return sqrt(self.a **2 + self.b **2)
+        return sqrt(self.a ** 2 + self.b ** 2)
 
     def validate(self):
         if self.a == 0 or self.b == 0:
@@ -163,6 +164,7 @@ class Rectangle(Shape2D):
 
 
 class Square(Shape2D):
+
     title = "Квадрат"
 
     def __init__(self, scene):
@@ -214,6 +216,7 @@ class Square(Shape2D):
 
 
 class Circle(Shape2D):
+
     title = "Круг"
 
     def __init__(self, scene):
@@ -266,6 +269,7 @@ class Circle(Shape2D):
 
 
 class Cube(Shape3D):
+
     title = "Куб"
 
     def __init__(self, scene):
@@ -316,6 +320,7 @@ class Cube(Shape3D):
 
 
 class Sphere(Shape3D):
+
     title = "Сфера"
 
     def __init__(self, scene):
@@ -362,6 +367,7 @@ class Sphere(Shape3D):
 
 
 class Rhombus(Shape2D):
+
     title = 'Ромб'
 
     def __init__(self, scene):
@@ -426,6 +432,7 @@ class Rhombus(Shape2D):
 
 
 class Cylinder(Shape3D):
+
     title = "Цилиндр"
 
     def __init__(self, scene):
@@ -485,6 +492,7 @@ class Cylinder(Shape3D):
 
 
 class Cone(Shape3D):
+
     title = "Конус"
 
     def __init__(self, scene):
@@ -545,6 +553,7 @@ class Cone(Shape3D):
 
 
 class Triangle(Shape2D):
+
     title = "Треугольник"
 
     def __init__(self, scene):
@@ -658,7 +667,7 @@ class Parallelepiped(Shape3D):
         return 2 * (self.a * self.b + self.b * self.c + self.a * self.c)
 
     def get_diagonal(self):
-        return sqrt(self.a **2 + self.b **2 + self.c **2)
+        return sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
 
     def validate(self):
         if self.a == 0:
@@ -710,6 +719,7 @@ class Parallelepiped(Shape3D):
 
 
 class Pyramid(Shape3D):
+
     title = "Пирамида"
 
     def __init__(self, scene):
